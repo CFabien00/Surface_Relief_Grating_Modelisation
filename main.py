@@ -1,53 +1,17 @@
-class surface_relief_grating:
-    def __init__(self, filename):
-        """Surface Relief Grating (SRG)
-        Args:
-            filename (str) -- filename of the stretched grating datas
-        Attributes:
-            nb_grating -- number of sinusoidal grating composing the SRG
-            nb_strech  -- number of strech step during the experiment
-            pitch      -- list of pithces of each grating at each strech step
-            amplitude  -- list of light amplitudes value of each grating at each strech step
-            angle      -- list of the angle from the stretch direction of each grating at each step of stretch
-        """
-        def add_data_line_in_list(lis, line):
-            data_line = []
-            for word in line.split():
-                data_line.append(float(word))
-            lis.append(data_line)
+from grating import *
 
-        self.pitch = []
-        self.amplitude = []
-        self.angle = []
-        self.nb_grating = 0
-        self.nb_strech = 0
-        self.data_file = ''
-        self.data_file = filename
+srg_3 = SurfaceReliefGrating("data/3g.txt")
 
-        with open(self.data_file, "r+") as file:
-            for line_number, line in enumerate(file):
-                if line_number == 0:
-                    self.nb_grating = int(file.readline(1))
-                if line_number == 1:
-                    self.nb_strech = int(file.readline(1))
-                if 1 < line_number <= (2 + self.nb_strech):
-                    add_data_line_in_list(self.pitch, line)
-                if (1 + self.nb_strech) < line_number <= (2 + 2*self.nb_strech):
-                    add_data_line_in_list(self.amplitude, line)
-                if (1 + 2*self.nb_strech) < line_number <= (2 + 3*self.nb_strech):
-                    add_data_line_in_list(self.angle, line)
+print(f'Gratings :\n {srg_3.nb_grating}')
+print(f'Strech steps :\n {srg_3.nb_strech}')
+print(f'Phase :\n {srg_3.phase}')
+print(f'Pitch list :\n {srg_3.pitches}')
+print(f'Aamplitudes list :\n {srg_3.amplitudes}')
+print(f'Angle list :\n {srg_3.angles}')
 
-            self.pitch.pop(0)
-            self.amplitude.pop(0)
-            self.angle.pop(0)
-
-
-if __name__ == "__main__":
-
-    srg_3 = surface_relief_grating("data/3g.txt")
-
-    print('G :', srg_3.nb_grating)
-    print('S :', srg_3.nb_strech)
-    print('P :', srg_3.pitch)
-    print('A :', srg_3.amplitude)
-    print('a :', srg_3.angle)
+stretch = 0
+surface = srg_3.get_stretched_surface(
+    stretching=stretch, dimension=10, step=0.1)
+print(f'Surface (stretch = {stretch}) :\n {surface}')
+print(len(surface))
+print(len(surface[1]))
