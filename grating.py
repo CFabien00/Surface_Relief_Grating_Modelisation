@@ -1,4 +1,7 @@
-from math import pi, cos, sin
+from math import (pi, cos, sin)
+
+
+DATA_SHIFT = 2
 
 
 class SinusoidalGrating:
@@ -9,6 +12,7 @@ class SinusoidalGrating:
             pitch (float): distance between two sinusoidal summit
             amplitude (float): light amplitude of the first diffracted order
             angle (float): angle betwen the line -1/+1 order and the horizontal plane
+
         """
         self.pitch = pitch
         self.amplitude = amplitude
@@ -26,10 +30,12 @@ class SurfaceReliefGrating:
             phase      : estimated phase between each grating
             pitch      : list of pithces of each grating at each strech step
             amplitude  : list of light amplitudes value of each grating at each strech step
-            angle      : list of the angle from the stretch direction of each grating at each step of stretch
+            angle      : list of the angle from the stretch direction of each grating
+                         at each step of stretch
         Methods:
             get_list_of_grating(self, stretch)
             get_stretched_surface(self, stretching=1, dimension=5, step=0.5)
+
         """
 
         self.pitches = []
@@ -47,17 +53,17 @@ class SurfaceReliefGrating:
                     data_line.append(float(word))
                 lis.append(data_line)
 
-            for line_number, line in enumerate(file):
-                if line_number == 0:
+            for line_nb, line in enumerate(file):
+                if line_nb == 0:
                     self.nb_grating = int(file.readline(1))
                     self.phase = pi/self.nb_grating
-                if line_number == 1:
+                if line_nb == 1:
                     self.nb_strech = int(file.readline(1))
-                if 1 < line_number <= (2 + self.nb_strech):
+                if 1 < line_nb <= (DATA_SHIFT + self.nb_strech):
                     add_data_line_in_list(self.pitches, line)
-                if (1 + self.nb_strech) < line_number <= (2 + 2*self.nb_strech):
+                if (1 + self.nb_strech) < line_nb <= (DATA_SHIFT * (1 + self.nb_strech)):
                     add_data_line_in_list(self.amplitudes, line)
-                if (1 + 2*self.nb_strech) < line_number <= (2 + 3*self.nb_strech):
+                if (1 + DATA_SHIFT*self.nb_strech) < line_nb <= (DATA_SHIFT * (1 + self.nb_strech) + self.nb_strech):
                     add_data_line_in_list(self.angles, line)
 
             self.pitches.pop(0)
@@ -72,21 +78,23 @@ class SurfaceReliefGrating:
 
         Returns:
             list: list of gratings (class : Gratings)
+
         """
         if 0 < stretch < self.nb_stretch:
             return None
 
         gratings_list = []
-        for grating in range(self.nb_grating):
+        for g in range(self.nb_grating):
             grating_caracteristic = SinusoidalGrating(
-                self.pitches[grating][stretch],
-                self.amplitudes[grating][stretch],
-                self.angles[grating][stretch])
+                self.pitches[g][stretch],
+                self.amplitudes[g][stretch],
+                self.angles[g][stretch])
             gratings_list.append(grating_caracteristic)
         return gratings_list
 
     def get_stretched_surface(self, stretching=1, dimension=5, step=0.1):
-        """Return surface of the area (dimension x dimension) formed one ore more sinusoidal grating
+        """Return surface of the area (dimension x dimension)
+        composed by one ore more sinusoidal grating
 
         Args:
             stretching (int): stretching step to analyse. Defaults to 1.
@@ -95,6 +103,7 @@ class SurfaceReliefGrating:
 
         Returns:
             list: list of amplidude list[x][y]=z
+
         """
         if 0 < stretching < self.nb_stretch:
             return None
@@ -105,8 +114,11 @@ class SurfaceReliefGrating:
         for g in range(self.nb_grating):
             for x in range(nb_point):
                 for y in range(nb_point):
-                    surface[x][y] += grating_list[g].amplitude*(self.phase + ((x*step)*cos(
-                        grating_list[g].angle) + (y*step)*sin(grating_list[g].angle)) / grating_list[g].pitch)
+                    surface[x][y] += (grating_list[g].amplitude *
+                                      (self.phase +
+                                       ((x * step) * cos(grating_list[g].angle) +
+                                        (y * step) * sin(grating_list[g].angle)) /
+                                       grating_list[g].pitch))
         return surface
 
 
@@ -123,7 +135,7 @@ if __name__ == "__main__":
 
     stretch = 0
     surface = srg_3.get_stretched_surface(
-        stretching=stretch, dimension=10, step=0.1)
+        stretching=stretch, dimension=1, step=0.1)
     print(f'Surface (stretch = {stretch}) :\n {surface}')
     print(len(surface))
     print(len(surface[1]))
