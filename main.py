@@ -13,5 +13,3 @@ stretch = 0
 surface = srg_3.get_stretched_surface(
     stretching=stretch, dimension=10, step=0.1)
 print(f'Surface (stretch = {stretch}) :\n {surface}')
-print(len(surface))
-print(len(surface[1]))

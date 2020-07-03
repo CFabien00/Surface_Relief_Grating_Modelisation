@@ -6,32 +6,60 @@ DATA_SHIFT = 2
 
 class SinusoidalGrating:
     def __init__(self, pitch, amplitude, angle):
-        """Gratings define by pitches, amplitudes and an angle from observation line
+        """Gratings define by pitches, amplitudes and an angle from observation line.
 
         Args:
-            pitch (float): distance between two sinusoidal summit
-            amplitude (float): light amplitude of the first diffracted order
-            angle (float): angle betwen the line -1/+1 order and the horizontal plane
+            pitch (float): distance between two sinusoidal summit.
+            amplitude (float): light amplitude of the first diffracted order.
+            angle (float): angle betwen the line -1/+1 order and the horizontal plane.
+        Attributes:
+            pitch (float)     : distance between summit of sinusoïdale grating.
+            amplitude (float) : amplitude of the sinusoïd.
+            angle (float)     : orientation from the x axe.
 
         """
         self.pitch = pitch
         self.amplitude = amplitude
         self.angle = angle
 
+    def get_surface(self, dimension=10, step=0.1):
+        """Return surface of the area (dimension x dimension)
+        composed by the sinusoidal grating.
+
+        Args:
+            dimension (int, optional): dimension of the wanted area. Defaults to 10.
+            step (float, optional): resolution of this surface. Defaults to 0.1.
+
+        Returns:
+            list of float : list of amplidude list[x][y]=z.
+
+        """
+        nb_point = int(dimension/step)
+        surface = [[0]*nb_point for i in range(nb_point)]
+        for x in range(nb_point):
+            for y in range(nb_point):
+                surface[x][y] = (self.amplitude *
+                                 (((x * step) * cos(self.angle) +
+                                   (y * step) * sin(self.angle)) /
+                                     self.pitch))
+        return surface
+
 
 class SurfaceReliefGrating:
     def __init__(self, filename):
-        """SurfaceGrating (SRG)
+        """SurfaceGrating (SRG) define by a list of gratings (composed of pitches,
+        amplitudes and angle) through different step of stretching.
+
         Args:
-            filename (str) : filename of the stretched grating datas
+            filename (str) : filename of the stretched grating datas.
         Attributes:
-            nb_grating : number of sinusoidal grating composing the SRG
-            nb_strech  : number of strech step during the experiment
-            phase      : estimated phase between each grating
-            pitch      : list of pithces of each grating at each strech step
-            amplitude  : list of light amplitudes value of each grating at each strech step
-            angle      : list of the angle from the stretch direction of each grating
-                         at each step of stretch
+            nb_grating (int)  : number of sinusoidal grating composing the SRG.
+            nb_strech (int)   : number of strech step during the experiment.
+            phase (float)     : estimated phase between each grating.
+            pitch (float)     : list of pithces of each grating at each strech step.
+            amplitude (float) : list of light amplitudes value of each grating at each strech step.
+            angle (float)     : list of the angle from the stretch direction of each grating
+                                at each step of stretch.
         Methods:
             get_list_of_grating(self, stretch)
             get_stretched_surface(self, stretching=1, dimension=5, step=0.5)
@@ -47,6 +75,7 @@ class SurfaceReliefGrating:
         self.data_file = filename
 
         with open(self.data_file, "r+") as file:
+
             def add_data_line_in_list(lis, line):
                 data_line = []
                 for word in line.split():
@@ -71,13 +100,13 @@ class SurfaceReliefGrating:
             self.angles.pop(0)
 
     def get_list_of_grating(self, stretch):
-        """Return a list of all gratings composing the SRG
+        """Return a list of all gratings composing the SRG.
 
         Args:
-            stretch (int): correspond to the desired stretch step to analyse
+            stretch (int): correspond to the desired stretch step to analyse.
 
         Returns:
-            list: list of gratings (class : Gratings)
+            list: list of gratings (class Gratings).
 
         """
         if 0 < stretch < self.nb_stretch:
@@ -94,7 +123,7 @@ class SurfaceReliefGrating:
 
     def get_stretched_surface(self, stretching=1, dimension=5, step=0.1):
         """Return surface of the area (dimension x dimension)
-        composed by one ore more sinusoidal grating
+        composed by one ore more sinusoidal grating.
 
         Args:
             stretching (int): stretching step to analyse. Defaults to 1.
@@ -102,7 +131,7 @@ class SurfaceReliefGrating:
             step (float, optional): resolution of this surface. Defaults to 0.5.
 
         Returns:
-            list: list of amplidude list[x][y]=z
+            list of float : list of amplidude list[x][y]=z.
 
         """
         if 0 < stretching < self.nb_stretch:
@@ -137,5 +166,5 @@ if __name__ == "__main__":
     surface = srg_3.get_stretched_surface(
         stretching=stretch, dimension=1, step=0.1)
     print(f'Surface (stretch = {stretch}) :\n {surface}')
-    print(len(surface))
-    print(len(surface[1]))
+    #print(len(surface))
+    #print(len(surface[1]))
