@@ -11,5 +11,5 @@ print(f'Angle list :\n {srg_3.angles}')
 
 stretch = 0
 surface = srg_3.get_stretched_surface(
-    stretching=stretch, dimension=10, step=0.1)
+    stretching=stretch, dimension=10, step=1)
 print(f'Surface (stretch = {stretch}) :\n {surface}')

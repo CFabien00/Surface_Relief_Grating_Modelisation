@@ -35,7 +35,8 @@ class SinusoidalGrating:
 
         """
         nb_point = int(dimension/step)
-        surface = [[0]*nb_point for i in range(nb_point)]
+        offset = 0.0
+        surface = [[offset]*nb_point for i in range(nb_point)]
         for x in range(nb_point):
             for y in range(nb_point):
                 surface[x][y] = (self.amplitude *
@@ -139,7 +140,8 @@ class SurfaceReliefGrating:
 
         grating_list = self.get_list_of_grating(stretch=stretching)
         nb_point = int(dimension/step)
-        surface = [[0]*nb_point for i in range(nb_point)]
+        offset = -pi
+        surface = [[offset]*nb_point for i in range(nb_point)]
         for g in range(self.nb_grating):
             for x in range(nb_point):
                 for y in range(nb_point):
@@ -166,5 +168,3 @@ if __name__ == "__main__":
     surface = srg_3.get_stretched_surface(
         stretching=stretch, dimension=1, step=0.1)
     print(f'Surface (stretch = {stretch}) :\n {surface}')
-    #print(len(surface))
-    #print(len(surface[1]))
